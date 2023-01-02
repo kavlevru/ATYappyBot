@@ -1,16 +1,18 @@
-description "ATYappyBot Demon"
+[Unit]
+Description="ATYappyBot Demon"
+After=network.target
 
-start on runlevel [2345]
-stop on runlevel [!2345]
+[Service]
+User=root
+Type=simple
+TimeoutSec=0
+ExecStart=python3.8 -m /root/bot/ATYappyBot/main.py
+KillMode=process
 
-respawn
-respawn limit 5 60
+Restart=on-failure
+RestartSec=42s
 
-env BOT_ENV=production
-env PYTHONPATH=/root/bot/ATYappybot/
-
-script
-    exec python3.8 /root/bot/ATYappybot/main.py
-end script
-
-post-stop exec sleep 5
+StandardOutput=null #If you don't want to make toms of logs you can set it null if you sent a file or some other options it will send all php output to this one.
+StandardError=/root/bot/ATYappyBot.log #path to error log file
+[Install]
+WantedBy=default.target
