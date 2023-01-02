@@ -6,7 +6,7 @@ After=network.target
 User=root
 Type=simple
 TimeoutSec=0
-ExecStart=python3.8 -m /root/bot/ATYappybot/main.py
+ExecStart=/usr/local/bin/python3.8 -m /root/bot/ATYappybot/main.py
 KillMode=process
 
 Restart=on-failure
