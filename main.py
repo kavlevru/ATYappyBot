@@ -3,7 +3,7 @@ from subprocess import PIPE
 import logging
 from telegram import Update
 from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler, MessageHandler, filters
-from configs.config import TG_TOKEN
+from configs import load_conf
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -51,7 +51,8 @@ async def do_time(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 if __name__ == '__main__':
-    application = ApplicationBuilder().token(TG_TOKEN).build()
+    config = load_conf()
+    application = ApplicationBuilder().token(config.TG_TOKEN).build()
 
     start_handler = CommandHandler('start', start)
     echo_handler = MessageHandler(filters.TEXT & (~filters.COMMAND), echo)
