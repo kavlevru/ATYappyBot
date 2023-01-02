@@ -4,9 +4,15 @@ After=network.target
 
 [Service]
 User=root
-Type=forking
+Type=simple
+TimeoutSec=0
 ExecStart=/usr/local/bin/python3.8 -m /root/bot/ATYappybot/main.py
-Restart=always
+KillMode=process
 
+Restart=on-failure
+RestartSec=42s
+
+StandardOutput=null #If you don't want to make toms of logs you can set it null if you sent a file or some other options it will send all php output to this one.
+StandardError=null #path to error log file
 [Install]
-WantedBy=multi-user.target
+WantedBy=default.target
