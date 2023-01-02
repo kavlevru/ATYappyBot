@@ -12,7 +12,5 @@ KillMode=process
 Restart=on-failure
 RestartSec=42s
 
-StandardOutput=null #If you don't want to make toms of logs you can set it null if you sent a file or some other options it will send all php output to this one.
-StandardError=/root/bot/ATYappyBot.log #path to error log file
 [Install]
 WantedBy=default.target
