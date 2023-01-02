@@ -4,13 +4,9 @@ After=network.target
 
 [Service]
 User=root
-Type=simple
-TimeoutSec=0
+Type=forking
 ExecStart=/usr/local/bin/python3.8 -m /root/bot/ATYappybot/main.py
-KillMode=process
-
-Restart=on-failure
-RestartSec=42s
+Restart=always
 
 [Install]
-WantedBy=default.target
+WantedBy=multi-user.target
