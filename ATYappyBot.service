@@ -1,6 +1,6 @@
-
+# for Ubuntu 16.04 or highest
 [Unit]
-Description=ATYappyBot v.0.1
+Description=ATYappyBot Demon
 After=network.target
 
 [Service]
@@ -11,7 +11,7 @@ Environment=PYTHONPATH=/home/ATYappyBot/
 WorkingDirectory=/home/ATYappyBot/
 ExecStart=/usr/local/bin/python3.9 /home/ATYappyBot/main.py
 Restart=always
-RestartSec=5
+RestartSec=60
 
 [Install]
 WantedBy=network.target
