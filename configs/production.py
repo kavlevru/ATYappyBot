@@ -1,2 +1,3 @@
 TG_TOKEN = "5832928373:AAEB_s1Hv6MQLw4Lf0KJ2akSKyaHzm5W2ig"
-JIRA_URL = ""
+WEATHER_URL = "https://api.weather.yandex.ru"
+WEATHER_TOKEN = "626e8ed8-1c62-40f3-ad7b-d67a9775e45d"

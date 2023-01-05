@@ -3,6 +3,8 @@ from subprocess import PIPE
 import logging
 from telegram import Update
 from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler, MessageHandler, filters
+from API.weather import WeatherClient
+from API.weather import WeatherQueryError, WeatherRequestError
 from config import load_conf
 
 logging.basicConfig(
@@ -50,6 +52,21 @@ async def do_time(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 
+async def weather(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    client = WeatherClient()
+    chat_id = update.effective_chat.id
+    try:
+        current_temp = client.get_fact_temp(lat=56.129057, lon=40.406635)
+        message = f"Температура: {current_temp}"
+    except:
+        logger.exception("WeatherRequestError")
+        message = "WeatherRequestError"
+        raise WeatherRequestError
+    text = f"Chat ID: {chat_id}, \n" \
+           f"Message: {message}"
+    await context.bot.send_message(chat_id=chat_id, text=text)
+
+
 if __name__ == '__main__':
     config = load_conf()
     application = ApplicationBuilder().token(config.TG_TOKEN).build()
@@ -59,11 +76,13 @@ if __name__ == '__main__':
     caps_handler = CommandHandler('caps', caps)
     help_handler = CommandHandler('help', help)
     time_handler = CommandHandler('time', do_time)
+    weather_handler = CommandHandler("weather", weather)
 
     application.add_handler(start_handler)
     application.add_handler(echo_handler)
     application.add_handler(caps_handler)
     application.add_handler(help_handler)
     application.add_handler(time_handler)
+    application.add_handler(weather_handler)
 
     application.run_polling()
