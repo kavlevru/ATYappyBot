@@ -12,6 +12,47 @@ logging.basicConfig(
     level=logging.INFO
 )
 
+condition = {
+    "clear": "☀️",
+    "partly-cloudy": "🌤",
+    "cloudy": "🌥",
+    "overcast": "☁️",
+    "drizzle": "🌦",
+    "light-rain": "🌧",
+    "rain": "🌧",
+    "moderate-rain": "🌧",
+    "heavy-rain": "🌧",
+    "continuous-heavy-rain": "🌧",
+    "showers": "🌧",
+    "wet-snow": "🌨",
+    "light-snow": "❄️",
+    "snow": "❄️❄️",
+    "snow-showers": "❄️❄️❄️",
+    "hail": "🥶",
+    "thunderstorm": "🌩",
+    "thunderstorm-with-rain": "🌩",
+    "thunderstorm-with-hail": "🌩"
+}
+
+wind_dir = {
+    "nw": "↖️",
+    "n": "⬆️",
+    "ne": "↗️",
+    "e": "➡️",
+    "se": "↘️",
+    "s": "⬇️",
+    "sw": "↙️",
+    "w": "⬅️",
+    "c": "0️⃣"
+}
+
+daytime = {
+    "d": "☀️ ",
+    "n": "🌙 "
+}
+
+moon_code = ['🌕', '🌖', '🌖', '🌖', '🌗', '🌘', '🌘', '🌘', '🌑', '🌒', '🌒', '🌒', '🌓', '🌔', '🌔', '🌔']
+
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_message(chat_id=update.effective_chat.id, text="I'm a bot, please talk to me!")
@@ -56,14 +97,23 @@ async def weather(update: Update, context: ContextTypes.DEFAULT_TYPE):
     client = WeatherClient()
     chat_id = update.effective_chat.id
     try:
-        current_temp = client.get_fact_temp(lat=56.129057, lon=40.406635)
-        message = f"🌡️{current_temp}"
+        fact_weather = client.get_weather(lat=56.129057, lon=40.406635)
+        if fact_weather['fact']['daytime'] == "d":
+            text = daytime["d"]
+        else:
+            text = daytime["n"]
+        if fact_weather['forecast']['parts'][0]['part_name'] == "night":
+            text += "Доброй ночи \n"
+        elif fact_weather['forecast']['parts'][0]['part_name'] == "morning":
+            text += "Доброе утро \n"
+        elif fact_weather['forecast']['parts'][0]['part_name'] == "evening":
+            text += "Добрый вечер \n"
+        else:
+            text += "Добрый день \n"
+        text += f"🌡️{fact_weather['fact']['temp']}"
     except:
-        logger.exception("WeatherRequestError")
-        message = "WeatherRequestError"
+        text = "WeatherRequestError"
         raise WeatherRequestError
-    text = f"Chat ID: {chat_id}, \n" \
-           f"Message: {message}"
     await context.bot.send_message(chat_id=chat_id, text=text)
 
 
