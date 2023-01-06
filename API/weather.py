@@ -38,8 +38,8 @@ class WeatherClient(object):
             "snow-showers": "❄️️",
             "hail": "🥶",
             "thunderstorm": "🌩",
-            "thunderstorm-with-rain": "🌩",
-            "thunderstorm-with-hail": "🌩"
+            "thunderstorm-with-rain": "⛈️",
+            "thunderstorm-with-hail": "⛈️"
         }
         self.wind_dir = {
             "nw": "↖️",
@@ -50,13 +50,16 @@ class WeatherClient(object):
             "s": "⬇️",
             "sw": "↙️",
             "w": "⬅️",
-            "c": "0️⃣"
+            "c": "⏺️"
         }
         self.daytime = {
             "d": "☀️ ",
             "n": "🌙 "
         }
         self.moon_code = ['🌕', '🌖', '🌖', '🌖', '🌗', '🌘', '🌘', '🌘', '🌑', '🌒', '🌒', '🌒', '🌓', '🌔', '🌔', '🌔']
+        self.lat = self.config.WEATHER_DEFAULT_LAT
+        self.lon = self.config.WEATHER_DEFAULT_LON
+        self.lang = self.config.WEATHER_DEFAULT_LANG
 
     def _request(self, method=None, query_params=None, params=None, headers=None):
         url = self.base_url
@@ -77,7 +80,7 @@ class WeatherClient(object):
             logger.exception("WeatherRequestError")
             raise WeatherRequestError
 
-    def get_weather(self, lat=55.833333, lon=37.616667, lang="ru_RU"):
+    def get_weather(self, lat=self.lat, lon=self.lon, lang=self.lang):
         query_params = f"?lat={lat}&lon={lon}&lang={lang}"
         headers = {
             "X-Yandex-API-Key": self.config.WEATHER_TOKEN
