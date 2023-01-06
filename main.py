@@ -57,7 +57,7 @@ async def weather(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_id = update.effective_chat.id
     try:
         current_temp = client.get_fact_temp(lat=56.129057, lon=40.406635)
-        message = f"Температура: {current_temp}"
+        message = f"🌡️{current_temp}"
     except:
         logger.exception("WeatherRequestError")
         message = "WeatherRequestError"
