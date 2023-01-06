@@ -84,9 +84,9 @@ class WeatherClient(object):
             raise WeatherRequestError
 
     def get_weather(self, **kwargs):
-        lat = kwargs.get("lat") if "lat" in kwargs.items() else self.lat
-        lon = kwargs.get("lon") if "lon" in kwargs.items() else self.lon
-        lang = kwargs.get("lang") if "lang" in kwargs.items() else self.lang
+        lat = kwargs.get("lat", self.lat)
+        lon = kwargs.get("lon", self.lon)
+        lang = kwargs.get("lang", self.lang)
 
         query_params = f"?lat={lat}&lon={lon}&lang={lang}"
         headers = {
