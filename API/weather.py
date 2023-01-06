@@ -16,50 +16,53 @@ class WeatherRequestError(Exception):
 
 
 class WeatherClient(object):
+    config = load_conf()
+    base_url = config.WEATHER_URL
+    condition = {
+        "clear": "☀️",
+        "partly-cloudy": "🌤",
+        "cloudy": "🌥",
+        "overcast": "☁️",
+        "drizzle": "🌦",
+        "light-rain": "🌧",
+        "rain": "🌧",
+        "moderate-rain": "🌧",
+        "heavy-rain": "🌧",
+        "continuous-heavy-rain": "🌧",
+        "showers": "🌧",
+        "wet-snow": "🌨",
+        "light-snow": "❄️",
+        "snow": "❄️",
+        "snow-showers": "❄️️",
+        "hail": "🥶",
+        "thunderstorm": "🌩",
+        "thunderstorm-with-rain": "⛈️",
+        "thunderstorm-with-hail": "⛈️"
+    }
+    wind_dir = {
+        "nw": "↖️",
+        "n": "⬆️",
+        "ne": "↗️",
+        "e": "➡️",
+        "se": "↘️",
+        "s": "⬇️",
+        "sw": "↙️",
+        "w": "⬅️",
+        "c": "⏺️"
+    }
+    daytime = {
+        "d": "☀️ ",
+        "n": "🌙 "
+    }
+    moon_code = ['🌕', '🌖', '🌖', '🌖', '🌗', '🌘', '🌘', '🌘', '🌑', '🌒', '🌒', '🌒', '🌓', '🌔', '🌔', '🌔']
 
-    def __init__(self):
-        self.config = load_conf()
-        self.base_url = self.config.WEATHER_URL
-        self.condition = {
-            "clear": "☀️",
-            "partly-cloudy": "🌤",
-            "cloudy": "🌥",
-            "overcast": "☁️",
-            "drizzle": "🌦",
-            "light-rain": "🌧",
-            "rain": "🌧",
-            "moderate-rain": "🌧",
-            "heavy-rain": "🌧",
-            "continuous-heavy-rain": "🌧",
-            "showers": "🌧",
-            "wet-snow": "🌨",
-            "light-snow": "❄️",
-            "snow": "❄️",
-            "snow-showers": "❄️️",
-            "hail": "🥶",
-            "thunderstorm": "🌩",
-            "thunderstorm-with-rain": "⛈️",
-            "thunderstorm-with-hail": "⛈️"
-        }
-        self.wind_dir = {
-            "nw": "↖️",
-            "n": "⬆️",
-            "ne": "↗️",
-            "e": "➡️",
-            "se": "↘️",
-            "s": "⬇️",
-            "sw": "↙️",
-            "w": "⬅️",
-            "c": "⏺️"
-        }
-        self.daytime = {
-            "d": "☀️ ",
-            "n": "🌙 "
-        }
-        self.moon_code = ['🌕', '🌖', '🌖', '🌖', '🌗', '🌘', '🌘', '🌘', '🌑', '🌒', '🌒', '🌒', '🌓', '🌔', '🌔', '🌔']
-        self.lat = self.config.WEATHER_DEFAULT_LAT
-        self.lon = self.config.WEATHER_DEFAULT_LON
-        self.lang = self.config.WEATHER_DEFAULT_LANG
+    def __init__(self,
+                 lat=config.WEATHER_DEFAULT_LAT,
+                 lon=config.WEATHER_DEFAULT_LON,
+                 lang=config.WEATHER_DEFAULT_LANG):
+        self.lat = lat
+        self.lon = lon
+        self.lang = lang
 
     def _request(self, method=None, query_params=None, params=None, headers=None):
         url = self.base_url
@@ -80,7 +83,11 @@ class WeatherClient(object):
             logger.exception("WeatherRequestError")
             raise WeatherRequestError
 
-    def get_weather(self, lat=self.lat, lon=self.lon, lang=self.lang):
+    def get_weather(self, **kwargs):
+        lat = kwargs.get("lat") if "lat" in kwargs.items() else self.lat
+        lon = kwargs.get("lon") if "lon" in kwargs.items() else self.lon
+        lang = kwargs.get("lang") if "lang" in kwargs.items() else self.lang
+
         query_params = f"?lat={lat}&lon={lon}&lang={lang}"
         headers = {
             "X-Yandex-API-Key": self.config.WEATHER_TOKEN

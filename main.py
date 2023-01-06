@@ -53,7 +53,7 @@ async def do_time(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def weather(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    client = WeatherClient()
+    client = WeatherClient(lat=56.129057, lon=40.406635)
     chat_id = update.effective_chat.id
     try:
         text = client.get_fact_weather_message(lat=56.129057, lon=40.406635)
