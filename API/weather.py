@@ -20,6 +20,43 @@ class WeatherClient(object):
     def __init__(self):
         self.config = load_conf()
         self.base_url = self.config.WEATHER_URL
+        self.condition = {
+            "clear": "☀️",
+            "partly-cloudy": "🌤",
+            "cloudy": "🌥",
+            "overcast": "☁️",
+            "drizzle": "🌦",
+            "light-rain": "🌧",
+            "rain": "🌧",
+            "moderate-rain": "🌧",
+            "heavy-rain": "🌧",
+            "continuous-heavy-rain": "🌧",
+            "showers": "🌧",
+            "wet-snow": "🌨",
+            "light-snow": "❄️",
+            "snow": "❄️",
+            "snow-showers": "❄️️",
+            "hail": "🥶",
+            "thunderstorm": "🌩",
+            "thunderstorm-with-rain": "🌩",
+            "thunderstorm-with-hail": "🌩"
+        }
+        self.wind_dir = {
+            "nw": "↖️",
+            "n": "⬆️",
+            "ne": "↗️",
+            "e": "➡️",
+            "se": "↘️",
+            "s": "⬇️",
+            "sw": "↙️",
+            "w": "⬅️",
+            "c": "0️⃣"
+        }
+        self.daytime = {
+            "d": "☀️ ",
+            "n": "🌙 "
+        }
+        self.moon_code = ['🌕', '🌖', '🌖', '🌖', '🌗', '🌘', '🌘', '🌘', '🌑', '🌒', '🌒', '🌒', '🌓', '🌔', '🌔', '🌔']
 
     def _request(self, method=None, query_params=None, params=None, headers=None):
         url = self.base_url
@@ -48,6 +85,29 @@ class WeatherClient(object):
 
         return self._request(method="/v2/informers", query_params=query_params, headers=headers)
 
-    def get_fact_temp(self, **kwargs):
-        result = self.get_weather(**kwargs)
-        return result["fact"]["temp"]
+    def get_fact_weather_message(self, **kwargs):
+        fact_weather = self.get_weather(**kwargs)
+
+        if fact_weather['fact']['daytime'] == "d":
+            text = self.daytime["d"]
+        else:
+            text = self.daytime["n"]
+        if fact_weather['forecast']['parts'][0]['part_name'] == "night":
+            text += "Добрый вечер \n"
+        elif fact_weather['forecast']['parts'][0]['part_name'] == "morning":
+            text += "Доброй ночи \n"
+        elif fact_weather['forecast']['parts'][0]['part_name'] == "evening":
+            text += "Добрый день \n"
+        else:
+            text += "Доброе утро \n"
+        text += f"{self.condition[fact_weather['fact']['condition']]} "\
+                f"{fact_weather['fact']['temp']} ℃  " \
+                f"💧{fact_weather['fact']['humidity']}%\n" \
+                f"💨 {self.wind_dir[fact_weather['fact']['wind_dir']]} " \
+                f"{fact_weather['fact']['wind_speed']} м/с\n" \
+                f"🕛 {fact_weather['fact']['pressure_mm']} мм. рт. ст.\n" \
+                f"🌞 {fact_weather['forecast']['sunrise']} " \
+                f"{self.moon_code[fact_weather['forecast']['moon_code']]} " \
+                f"{fact_weather['forecast']['sunset']}"
+
+        return text
